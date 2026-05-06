@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Town vs Mafia: AI Edition</title>
+<meta name="description" content="Play Town vs Mafia against AI agents powered by large language models. A cinematic social deduction experience.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+
+<!-- ══ SVG Icon Defs ══════════════════════════════════════════════════ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Speaker / Sound On -->
+  <symbol id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+  </symbol>
+  <!-- Speaker / Sound Off -->
+  <symbol id="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <line x1="23" y1="9" x2="17" y2="15"></line>
+    <line x1="17" y1="9" x2="23" y2="15"></line>
+  </symbol>
+  <!-- Eye (Dev mode OFF = hidden) -->
+  <symbol id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+    <line x1="1" y1="1" x2="23" y2="23"></line>
+  </symbol>
+  <!-- Eye (Dev mode ON = visible) -->
+  <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </symbol>
+  <!-- Sun (light theme) -->
+  <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </symbol>
+  <!-- Moon (dark theme) -->
+  <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </symbol>
+  <!-- Display / Monitor (system theme) -->
+  <symbol id="icon-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
+  </symbol>
+  <!-- X (exit) -->
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+  </symbol>
+  <!-- Mic -->
+  <symbol id="icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+    <line x1="12" y1="19" x2="12" y2="23"></line>
+    <line x1="8" y1="23" x2="16" y2="23"></line>
+  </symbol>
+  <!-- Mic Off -->
+  <symbol id="icon-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="1" y1="1" x2="23" y2="23"></line>
+    <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+    <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+    <line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line>
+  </symbol>
+  <!-- Skull -->
+  <symbol id="icon-skull" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle>
+    <path d="M8 20v2h8v-2"></path><path d="M12.5 17l-.5-1-.5 1"></path>
+    <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"></path>
+  </symbol>
+  <!-- Shield -->
+  <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="icon-skip" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+  <!-- Gavel -->
+  <symbol id="icon-gavel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m14 13-8.5 8.5a2.12 2.12 0 0 1-3-3L11 10"></path>
+    <path d="m16 16 6-6"></path><path d="m8 8 6-6"></path>
+    <path d="m9 7 8 8"></path><path d="m21 11-8-8"></path>
+  </symbol>
+  <!-- Sword -->
+  <symbol id="icon-sword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+    <line x1="13" y1="19" x2="19" y2="13"></line>
+    <line x1="16" y1="16" x2="20" y2="20"></line>
+    <line x1="19" y1="21" x2="21" y2="19"></line>
+  </symbol>
+</svg>
+
+<!-- ══ NAME MODAL ══════════════════════════════════════════════════════ -->
+<div id="nameModal" class="modal-backdrop hidden">
+  <div class="modal-box animate-scale-in">
+    <div class="modal-logo">🎭</div>
+    <h1 class="modal-title">Town vs Mafia</h1>
+    <p class="modal-sub">AI EDITION</p>
+    <p class="modal-desc">Enter your name to begin</p>
+    <input id="nameInput" class="name-input" type="text" placeholder="Your name…" maxlength="20" autocomplete="off">
+    <button id="nameSubmit" class="btn-primary">ENTER THE GAME</button>
+  </div>
+</div>
+
+<!-- ══ SETUP SCREEN ════════════════════════════════════════════════════ -->
+<div id="setupScreen" class="screen hidden">
+  <header class="setup-topbar">
+    <button id="setupThemeToggle" class="btn-icon" title="Toggle Theme">
+      <svg class="icon"><use id="setupThemeIcon" href="#icon-monitor"/></svg>
+    </button>
+  </header>
+  <div class="setup-container">
+    <div class="setup-header">
+      <span class="setup-logo">Town vs Mafia</span>
+      <span class="setup-edition">AI EDITION</span>
+    </div>
+    <h2 class="setup-title">NEW GAME</h2>
+    <div class="setup-grid">
+      <div class="setup-card">
+        <label class="setup-label">YOUR NAME</label>
+        <div class="setup-name-row">
+          <span id="setupPlayerName" class="setup-name-display">Player</span>
+          <button id="renameBtn" class="btn-ghost-sm">✏ Rename</button>
+        </div>
+      </div>
+      <div class="setup-card">
+        <label class="setup-label">PLAYERS</label>
+        <div class="toggle-group" id="playerCountGroup">
+          <button class="toggle-btn" data-val="4">4</button>
+          <button class="toggle-btn active" data-val="5">5</button>
+          <button class="toggle-btn" data-val="6">6</button>
+          <button class="toggle-btn" data-val="7">7</button>
+          <button class="toggle-btn" data-val="8">8</button>
+        </div>
+      </div>
+      <div class="setup-card">
+        <label class="setup-label">AI PROVIDER</label>
+        <select id="aiProvider" class="setup-select">
+          <option value="groq">Groq</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="google">Google Gemini</option>
+          <option value="xai">xAI Grok</option>
+          <option value="deepseek">DeepSeek</option>
+        </select>
+      </div>
+      <div class="setup-card">
+        <label class="setup-label">DISCUSSION ROUNDS</label>
+        <div class="toggle-group" id="discussionGroup">
+          <button class="toggle-btn" data-val="1">1</button>
+          <button class="toggle-btn active" data-val="2">2</button>
+          <button class="toggle-btn" data-val="3">3</button>
+        </div>
+      </div>
+      <div class="setup-card">
+        <label class="setup-label">AI MODEL</label>
+        <input id="aiModel" class="setup-input" type="text" value="llama-3.1-8b-instant">
+      </div>
+      <div class="setup-card">
+        <label class="setup-label">MODE</label>
+        <div class="toggle-group" id="modeGroup">
+          <button class="toggle-btn active" data-val="play">Play</button>
+          <button class="toggle-btn" data-val="spectate">Spectate</button>
+        </div>
+      </div>
+    </div>
+    <div class="setup-actions">
+      <button id="startGameBtn" class="btn-primary btn-large">▶ START GAME</button>
+    </div>
+    <p class="setup-dev-hint">Enable <strong>Observation Mode</strong> in-game to see all AI roles and internal messages.</p>
+  </div>
+</div>
+
+<!-- ══ GAME SCREEN ═════════════════════════════════════════════════════ -->
+<div id="gameScreen" class="screen hidden">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <!-- Dev/Observation toggle — leftmost -->
+      <button id="devToggle" class="btn-icon" title="Observation Mode">
+        <svg class="icon"><use href="#icon-eye-off"/></svg>
+      </button>
+      <span class="topbar-logo">Town vs Mafia</span>
+      <div id="phaseIndicator" class="phase-indicator">
+        <div class="phase-indicator"><span id="phaseIcon">☀️</span> <span id="phaseLabel">Day 1</span></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="pauseBtn" class="btn-icon" title="Pause Game">
+        <svg class="icon"><use id="pauseIconUse" href="#icon-pause"/></svg>
+      </button>
+      <!-- Theme cycle -->
+      <button id="themeToggle" class="btn-icon" title="Toggle Theme">
+        <svg class="icon"><use id="themeIcon" href="#icon-monitor"/></svg>
+      </button>
+      <!-- TTS toggle -->
+      <button id="ttsToggle" class="btn-icon active" title="Toggle Voice (TTS)">
+        <svg class="icon"><use id="ttsIcon" href="#icon-sound-on"/></svg>
+      </button>
+      <!-- Exit -->
+      <button id="exitBtn" class="btn-icon danger" title="Exit Game">
+        <svg class="icon"><use href="#icon-x"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="devBanner" class="dev-banner hidden">
+    <span class="dev-banner-text">◈ OBSERVATION MODE ACTIVE — ALL ROLES VISIBLE ◈</span>
+  </div>
+
+  <div class="game-layout">
+    <section class="players-section">
+      <div id="playersGrid" class="players-grid"></div>
+    </section>
+    <aside class="feed-section">
+      <div class="feed-header">
+        <span>GAME LOG</span>
+        <span id="feedStatus" class="feed-status">●</span>
+      </div>
+      <div id="eventFeed" class="event-feed"></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ══ PHASE OVERLAY ═══════════════════════════════════════════════════ -->
+<div id="phaseOverlay" class="phase-overlay hidden">
+  <div class="phase-overlay-content animate-phase-in">
+    <div id="phaseOverlayIcon" class="phase-overlay-icon">☀️</div>
+    <div id="phaseOverlayText" class="phase-overlay-text">DAY</div>
+    <div id="phaseOverlayRound" class="phase-overlay-round">Round 1</div>
+  </div>
+</div>
+
+<!-- ══ KO OVERLAY ════════════════════════════════════════════════════ -->
+<div id="koOverlay" class="ko-overlay hidden">
+  <div id="koContent" class="ko-content">
+    <svg class="ko-svg-icon" id="koSvgIcon"><use id="koIconUse" href="#icon-skull"/></svg>
+    <div id="koName" class="ko-name">ALICE</div>
+    <div id="koLabel" class="ko-label">ELIMINATED</div>
+  </div>
+</div>
+
+<!-- ══ PAUSE OVERLAY ═══════════════════════════════════════════════════ -->
+<div id="pauseOverlay" class="pause-overlay hidden">
+  <div class="pause-content animate-scale-in">
+    <svg class="pause-svg-icon"><use href="#icon-pause"/></svg>
+    <div class="pause-label">PAUSED</div>
+    <div class="pause-msg">The game has been frozen.</div>
+    <button id="resumeOverlayBtn" class="btn-primary btn-large" style="margin-top:2rem">RESUME GAME</button>
+  </div>
+</div>
+
+<!-- ══ FLOATING SELECTION OVERLAY ════════════════════════════════════ -->
+<div id="floatSelect" class="float-select hidden">
+  <div class="float-select-bg"></div>
+  <div class="float-select-inner">
+    <div id="floatSelectTitle" class="float-select-title">VOTE TO ARREST</div>
+    <div id="floatSelectCards" class="float-select-cards"></div>
+    <div class="float-timer-bar"><div id="floatTimerFill" class="float-timer-fill"></div></div>
+  </div>
+</div>
+
+<!-- ══ VICTORY SCREEN ═════════════════════════════════════════════════ -->
+<div id="victoryScreen" class="victory-screen hidden">
+  <div class="victory-content animate-scale-in">
+    <div id="victoryIconSvg" class="victory-icon-wrap">🏆</div>
+    <div id="victoryTitle" class="victory-title">TOWN WINS</div>
+    <div id="victoryMsg" class="victory-msg"></div>
+    <div id="finalRoles" class="final-roles"></div>
+    <button id="playAgainBtn" class="btn-primary btn-large">PLAY AGAIN</button>
+  </div>
+</div>
+
+<!-- ══ HUMAN INPUT PANEL ═══════════════════════════════════════════════ -->
+<div id="humanPanel" class="human-panel hidden">
+  <div class="human-panel-inner">
+    <div id="humanPromptLabel" class="human-prompt-label">Your turn to speak</div>
+    <div id="humanCandidates" class="human-candidates"></div>
+    <div id="humanTextRow" class="human-text-row hidden">
+      <input id="humanTextInput" class="human-text-input" type="text" placeholder="Type your message…" maxlength="200">
+      <button id="humanMicBtn" class="btn-icon mic-btn" title="Voice input">
+        <svg class="icon"><use id="micIcon" href="#icon-mic"/></svg>
+      </button>
+      <button id="humanSendBtn" class="btn-primary">SEND</button>
+    </div>
+    <div class="human-timer-bar"><div id="humanTimerFill" class="human-timer-fill"></div></div>
+  </div>
+</div>
+
+<script src="/web/game.js"></script>
+</body>
+</html>

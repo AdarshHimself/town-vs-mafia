@@ -1,0 +1,81 @@
+# Model files (but keep the directory structure)
+*.gguf
+*.ggml
+models/*
+!models/.gitkeep
+
+# Python
+__pycache__/
+venv/
+.venv/
+env/
+flask_session/
+*.pyc
+*.pyo
+*.pyd
+
+# Mac
+.DS_Store
+
+# Don't include llama.cpp build
+llama.cpp/
+
+# Environment variables (IMPORTANT: Never commit API keys!)
+.env
+.env.local
+.env.*.local
+
+
+# LaTeX auxiliary files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.figlist
+*.makefile
+*.fdblatexmk
+
+# Compiled PDFs (comment out if you want to track final versions)
+# mini-mafia/article/main.pdf
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Node/Frontend
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
+missfont.log
+
+# Archive downloads
+arXiv-*/
+*.tar.gz
+
+
+mini-mafia-benchmark/article/
+
+reviews/

@@ -1,0 +1,126 @@
+# src/config.py
+"""
+Centralized configuration for the LLM Mafia Game system.
+
+This module provides a single source of truth for system-wide settings.
+The prompt system now uses a single prompt.txt file for consistency.
+"""
+
+# MODEL CONFIGURATIONS
+# Available local models in models/ directory:
+# - Mistral-7B-Instruct-v0.2-Q4_K_M.gguf  # Mistral 7B v0.2 (Dec 2023, 4.1GB) 
+# - Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf # Llama 3.1 8B (4.6GB)
+# - Qwen2.5-7B-Instruct-Q4_K_M.gguf       # Qwen2.5 7B (4.4GB)
+# - qwen2.5-32b-instruct-q4_k_m-*-of-00005.gguf # Qwen2.5 32B (5 parts, ~19GB total)
+# - openai_gpt-oss-20b-Q4_K_M.gguf        # GPT-OSS 20B (11GB)
+# - gemma-2-27b-it-Q4_K_M.gguf            # Gemma 2 27B (16GB)
+# - Qwen3-14B-Q4_K_M.gguf        # Qwen3 14B (~8GB)
+# EX: 'mafia': {'type': 'local', 'model': 'Mistral-7B-Instruct-v0.2-Q4_K_M.gguf', 'temperature': 0.7},
+
+# Available OpenAI/Anthropic/xAI/DeepSeek/Google models:
+# - gpt-4o                      # OpenAI GPT-4o
+# - gpt-5                       # OpenAI GPT-5 (reasoning model)
+# - gpt-4.1-mini                  # OpenAI GPT-4.1 mini
+# - grok-4                      # xAI Grok-4 (reasoning model)
+# - grok-3-mini                   # xAI Grok-3 mini
+# - claude-sonnet-4-20250514    #Claude Sonnet
+# - claude-opus-4-1-20250805    #Claude Opus  
+# - claude-3-haiku-20240307 #Claude Haiku 3  
+# - claude-3-5-haiku-latest #Claude Haiku 3.5
+# - deepseek-chat                 # DeepSeek V3.1
+# - gemini-2.5-flash           # Google Gemini 2.5 Flash
+# - gemini-2.5-flash-lite       # Google Gemini 2.5 Flash Lite
+# EX: 'mafia': {'type': 'openai', 'model': 'gpt-4o', 'temperature': 0.7},
+# EX: 'mafia': {'type': 'openai', 'model': 'gpt-5', 'temperature': 0.7},
+# EX: 'mafia': {'type': 'xai', 'model': 'grok-4', 'temperature': 0.7},
+# EX: 'mafia': {'type': 'deepseek', 'model': 'deepseek-v3.1', 'temperature': 0.7},
+# EX: 'mafia': {'type': 'google', 'model': 'gemini-2.0-flash-exp', 'temperature': 0.7},
+# EX: 'mafia': {'type': 'openai', 'model': 'gpt-5-mini', 'reasoning_effort': 'minimal'}
+
+DEFAULT_MODEL_CONFIGS = {
+    'villager': {'type': 'xai', 'model': 'grok-3-mini', 'temperature': 0.7},
+    'mafia': {'type': 'deepseek', 'model': 'deepseek-chat', 'temperature': 0.7},
+    'detective': {'type': 'openai', 'model': 'gpt-5-mini', 'reasoning_effort': 'minimal'},
+}
+
+# GAME SETTINGS
+DEFAULT_MESSAGE_LIMIT = 200
+
+# TOKEN LIMITS by model type
+# Standard limits for most models
+STANDARD_TOKEN_LIMITS = {
+    'discussion': 150,  # Increased to prevent truncation
+    'voting': 5,        # A name
+    'night_action': 5   # A name
+}
+
+# Extended limits for reasoning models (GPT-OSS, etc.)
+#For reasoning_effort = "miminum" , 1000,100,100 is enough
+#For reasoning_effort = "medium" , 2000,1000,1000 is enough
+REASONING_TOKEN_LIMITS = {
+    'discussion': 6000,   # Increased for Grok-4 which may need more tokens
+    'voting': 6000,       # Increased from 1000
+    'night_action': 6000  # Increased from 1000
+}
+
+# Model-specific token limit mapping
+MODEL_TOKEN_LIMITS = {
+    'openai_gpt-oss-20b-Q4_K_M.gguf': REASONING_TOKEN_LIMITS,
+    'gpt-oss': REASONING_TOKEN_LIMITS,  # For any GPT-OSS variants
+    'gpt-5': REASONING_TOKEN_LIMITS,    # OpenAI GPT-5 reasoning model
+    'grok-4': REASONING_TOKEN_LIMITS,   # xAI Grok-4 reasoning model
+    'gemini-2.5-pro': REASONING_TOKEN_LIMITS,
+    'deepseek-reasoner': REASONING_TOKEN_LIMITS,  # DeepSeek reasoning model
+}
+
+# Default token limits (used if model not in specific mapping)
+TOKEN_LIMITS = STANDARD_TOKEN_LIMITS
+
+
+def get_token_limits_for_model(model_config):
+    """Get appropriate token limits based on model configuration."""
+    if model_config.get('type') == 'local':
+        model_filename = model_config.get('model', '')
+        
+        # Check if this is a reasoning model
+        if model_filename in MODEL_TOKEN_LIMITS:
+            return MODEL_TOKEN_LIMITS[model_filename]
+        elif 'gpt-oss' in model_filename.lower():
+            return REASONING_TOKEN_LIMITS
+    
+    elif model_config.get('type') == 'openai':
+        model_name = model_config.get('model', '')
+        
+        # Check if this is a reasoning model
+        if model_name in MODEL_TOKEN_LIMITS:
+            return MODEL_TOKEN_LIMITS[model_name]
+        elif model_name.startswith('gpt-5'):
+            return REASONING_TOKEN_LIMITS
+    
+    elif model_config.get('type') == 'xai':
+        model_name = model_config.get('model', '')
+        
+        # Check if this is a reasoning model
+        if model_name in MODEL_TOKEN_LIMITS:
+            return MODEL_TOKEN_LIMITS[model_name]
+        elif model_name.startswith('grok'):
+            return REASONING_TOKEN_LIMITS
+    
+    elif model_config.get('type') == 'deepseek':
+        model_name = model_config.get('model', '')
+        
+        # Check if this is a reasoning model
+        if model_name in MODEL_TOKEN_LIMITS:
+            return MODEL_TOKEN_LIMITS[model_name]
+        elif 'reasoner' in model_name:
+            return REASONING_TOKEN_LIMITS
+    
+    # Default to standard limits
+    return STANDARD_TOKEN_LIMITS
+
+# Prompt configuration is now handled by prompt.txt file
+# No need for version-specific prompt configuration
+
+def get_default_model_configs():
+    """Get the default model configuration for the system"""
+    return DEFAULT_MODEL_CONFIGS.copy()
