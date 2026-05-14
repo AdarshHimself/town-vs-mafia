@@ -116,6 +116,4 @@ Prompts are in `src/prompt.txt` (standard) and `src/prompt_short.txt` (concise).
 The `mini-mafia-benchmark/` directory contains the full research suite: automated batch experiments, a SQLite database (~15k games), analysis scripts, and the web interface for collecting human gameplay data.
 
 The `mini-mafia-benchmark/` directory is the research suite behind the paper [Deceive, Detect, and Disclose: Large Language Models Play Mini-Mafia](https://arxiv.org/abs/2509.23023). See [`mini-mafia-benchmark/README.md`](mini-mafia-benchmark/README.md) for the benchmarking workflow.# town-vs-mafia
-# town-vs-mafia
-# town-vs-mafia
-# town-vs-mafia
+
